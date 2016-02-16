@@ -139,3 +139,12 @@ class TestFieldHistory(TestCase):
         self.assertEqual(history.field_name, 'pet')
         self.assertEqual(history.field_value, pet)
         self.assertIsNotNone(history.date_created)
+
+    def test_field_history_works_with_field_set_to_None(self):
+        owner = Owner.objects.create(pet=None)
+
+        history = owner.get_pet_history()[0]
+
+        self.assertEqual(history.object, owner)
+        self.assertEqual(history.field_name, 'pet')
+        self.assertEqual(history.field_value, None)
