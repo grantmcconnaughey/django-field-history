@@ -22,6 +22,9 @@ clean-pyc:
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
 
+makemigrations:
+	python manage.py makemigrations field_history
+
 lint:
 	flake8 field_history tests
 
