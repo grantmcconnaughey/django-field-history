@@ -4,22 +4,13 @@ import datetime
 from unittest.case import skip
 
 from django.test import TestCase
-
+from django.utils import six
 from field_history.models import FieldHistory
 
 from .models import Human, Person, Pet, Owner
 
 
 class TestFieldHistory(TestCase):
-
-    def assertItemsEqual(self, first, second):
-        """
-        An assertItemsEqual that works on Python 2 and 3.
-        """
-        try:
-            return self.assertCountEqual(first, second)  # Python 3
-        except AttributeError as e:
-            super(TestCase, self).assertItemsEqual(first, second)  # Python 2
 
     def test_new_object_creates_field_history(self):
         # No FieldHistory objects yet
@@ -71,7 +62,7 @@ class TestFieldHistory(TestCase):
 
         histories = FieldHistory.objects.get_for_model_and_field(person, 'name')
 
-        self.assertItemsEqual(list(person.field_history), list(histories))
+        six.assertCountEqual(list(person.field_history), list(histories))
 
     def test_model_has_get_field_history_method(self):
         person = Person.objects.create(name='Initial Name')
@@ -79,7 +70,7 @@ class TestFieldHistory(TestCase):
         history = FieldHistory.objects.get()
 
         # Or using the {field_name}_history property added to your model
-        self.assertItemsEqual(list(person.get_name_history()), [history])
+        six.assertCountEqual(list(person.get_name_history()), [history])
 
     def test_field_history_is_not_created_if_field_value_did_not_change(self):
         person = Person.objects.create(name='Initial Name')
