@@ -6,6 +6,7 @@ try:
     from django.contrib.contenttypes.fields import GenericForeignKey
 except ImportError:  # Django < 1.9 pragma: no cover
     from django.contrib.contenttypes.generic import GenericForeignKey
+from django.core import serializers
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 
@@ -27,8 +28,9 @@ class FieldHistory(models.Model):
 
     @property
     def field_value(self):
-        data = json.loads(self.serialized_data)
-        return data[self.field_name]
+        instances = serializers.deserialize('json', self.serialized_data)
+        instance = list(instances)[0].object
+        return getattr(instance, self.field_name)
 
     def __str__(self):
         return '{} field history for {}'.format(self.field_name, self.object)

@@ -1,12 +1,12 @@
 from __future__ import unicode_literals
 
-import json
 from copy import deepcopy
 
 from django.core import serializers
 from django.core.exceptions import FieldError
 from django.db import models
 from django.db.models.query_utils import DeferredAttribute
+from django.utils.functional import curry
 
 from .models import FieldHistory
 
@@ -22,7 +22,7 @@ class FieldInstanceTracker(object):
         return getattr(self.instance, self.field_map[field])
 
     def set_saved_fields(self, fields=None):
-        if not self.instansce.pk:
+        if not self.instance.pk:
             self.saved_data = {}
         elif not fields:
             self.saved_data = self.current()
@@ -108,9 +108,10 @@ class FieldHistoryTracker(object):
         return field_map
 
     def contribute_to_class(self, cls, name):
+        setattr(cls, '_get_field_history', _get_field_history)
         for field in self.fields:
-            func = lambda obj: FieldHistory.objects.get_for_model_and_field(obj, field)
-            setattr(cls, '%s_history' % field, property(func))
+            setattr(cls, 'get_%s_history' % field,
+                    curry(cls._get_field_history, field=field))
         self.name = name
         self.attname = '_%s' % name
         models.signals.class_prepared.connect(self.finalize_class, sender=cls)
@@ -141,7 +142,7 @@ class FieldHistoryTracker(object):
             # Create a FieldHistory for all self.fields that have changed
             for field in self.fields:
                 if tracker.has_changed(field) or is_new_object:
-                    data = json.dumps({field: getattr(instance, field)})
+                    data = serializers.serialize('json', [instance], fields=[field])
                     FieldHistory.objects.create(
                         object=instance,
                         field_name=field,
@@ -155,3 +156,7 @@ class FieldHistoryTracker(object):
             return self
         else:
             return getattr(instance, self.attname)
+
+
+def _get_field_history(self, field):
+    return FieldHistory.objects.get_for_model_and_field(self, field)

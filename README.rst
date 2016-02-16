@@ -24,12 +24,12 @@ Install django-field-history::
 
 Then use it in a project::
 
-    import field_history
+    from field_history import FieldHistoryTracker
 
     class Person(models.Model):
         name = models.CharField(max_length=255)
 
-        history_fields = field_history.FieldHistoryTracker(['name'])
+        history_fields = FieldHistoryTracker(['name'])
 
     # No FieldHistory objects yet
     self.assertEqual(FieldHistory.objects.count(), 0)
@@ -41,7 +41,7 @@ Then use it in a project::
 
     # This object has some fields on it
     history = FieldHistory.objects.get()
-    self.assertEqual(history.model_object, person)
+    self.assertEqual(history.object, person)
     self.assertEqual(history.field_name, 'name')
     self.assertEqual(history.field_value, 'Initial Name')
     self.assertIsNotNone(history.history_date)
@@ -55,11 +55,11 @@ Then use it in a project::
     histories = FieldHistory.objects.get_for_model_and_field(person, 'name')
     self.assertQuerysetEqual(person.history_fields.all(), histories)
 
-    # Or using the {field_name}_history property added to your model
-    self.assertQuerysetEqual(person.name_history, histories)
+    # Or using the get_{field_name}_history() method added to your model
+    self.assertItemsEqual([person.get_name_history()], [histories])
 
     updated_history = histories.order_by('-history_date').first()
-    self.assertEqual(history.model_object, person)
+    self.assertEqual(history.object, person)
     self.assertEqual(history.field_name, 'name')
     self.assertEqual(history.field_value, 'Updated Name')
     self.assertIsNotNone(history.history_date)
