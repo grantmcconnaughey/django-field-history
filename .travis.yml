@@ -1,0 +1,29 @@
+language: python
+
+python:
+  - 2.7
+  - 3.3
+  - 3.4
+  - 3.5
+
+before_install:
+  - pip install coveralls
+
+install:
+  - pip install Django==${DJANGO}
+  - pip install -e .
+  - pip install -r requirements.txt
+
+script: coverage run --source field_history runtests.py tests
+
+env:
+  - DJANGO=1.8.8
+  - DJANGO=1.9.2
+
+matrix:
+  exclude:
+    - python: 3.3
+      env: DJANGO=1.9.2
+
+after_success:
+  - coveralls
