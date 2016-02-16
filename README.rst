@@ -35,7 +35,7 @@ Then add it to your models.
 
 .. code-block:: python
 
-    from field_history import FieldHistoryTracker
+    from field_history.tracker import FieldHistoryTracker
 
     class Person(models.Model):
         name = models.CharField(max_length=255)
@@ -46,12 +46,13 @@ Now each time you change the name field information about that change will be st
 
 .. code-block:: python
 
+    from field_history.models import FieldHistory
+
     # No FieldHistory objects yet
     self.assertEqual(FieldHistory.objects.count(), 0)
 
-    person = Person.objects.create(name='Initial Name')
-
     # Creating an object will make one
+    person = Person.objects.create(name='Initial Name')
     assert FieldHistory.objects.count() == 1
 
     # This object has some fields on it
@@ -59,7 +60,7 @@ Now each time you change the name field information about that change will be st
     assert history.object == person
     assert history.field_name == 'name'
     assert history.field_value == 'Initial Name'
-    assert history.history_date is not None
+    assert history.date_created is not None
 
     # Updating that particular field creates a new FieldHistory
     person.name = 'Updated Name'
@@ -68,16 +69,16 @@ Now each time you change the name field information about that change will be st
 
     # You can query FieldHistory objects this way
     histories = FieldHistory.objects.get_for_model_and_field(person, 'name')
-    self.assertQuerysetEqual(person.field_history.all(), histories)
+    assert list(person.field_history) == list(histories)
 
     # Or using the get_{field_name}_history() method added to your model
     self.assertItemsEqual([person.get_name_history()], [histories])
 
-    updated_history = histories.order_by('-history_date').first()
+    updated_history = histories.order_by('-date_created').first()
     assert history.object == person
     assert history.field_name == 'name'
     assert history.field_value == 'Updated Name'
-    assert history.history_date is not None
+    assert history.date_created is not None
 
 Features
 --------
