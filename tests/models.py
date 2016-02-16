@@ -11,13 +11,13 @@ class Owner(models.Model):
     name = models.CharField(max_length=255)
     pet = models.ForeignKey(Pet, blank=True, null=True)
 
-    history_fields = FieldHistoryTracker(['pet'])
+    field_history = FieldHistoryTracker(['pet'])
 
 
 class Person(models.Model):
     name = models.CharField(max_length=255)
 
-    history_fields = FieldHistoryTracker(['name'])
+    field_history = FieldHistoryTracker(['name'])
 
 
 class Human(models.Model):
@@ -26,5 +26,5 @@ class Human(models.Model):
     body_temp = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
     birth_date = models.DateField(blank=True, null=True)
 
-    history_fields = FieldHistoryTracker(['age', 'is_female',
-                                          'body_temp', 'birth_date'])
+    field_history = FieldHistoryTracker(['age', 'is_female',
+                                         'body_temp', 'birth_date'])

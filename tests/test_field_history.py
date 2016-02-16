@@ -36,7 +36,6 @@ class TestFieldHistory(TestCase):
         person.save()
         self.assertEqual(FieldHistory.objects.count(), 2)
 
-        # You can query FieldHistory objects this way
         histories = FieldHistory.objects.get_for_model_and_field(person, 'name')
 
         updated_history = histories.order_by('-date_created').first()
@@ -44,6 +43,26 @@ class TestFieldHistory(TestCase):
         self.assertEqual(updated_history.field_name, 'name')
         self.assertEqual(updated_history.field_value, 'Updated Name')
         self.assertIsNotNone(updated_history.date_created)
+
+        # One more time for good measure
+        person.name = 'Updated Again'
+        person.save()
+        self.assertEqual(FieldHistory.objects.count(), 3)
+
+        histories = FieldHistory.objects.get_for_model_and_field(person, 'name')
+
+        third_history = histories.order_by('-date_created').first()
+        self.assertEqual(third_history.object, person)
+        self.assertEqual(third_history.field_name, 'name')
+        self.assertEqual(third_history.field_value, 'Updated Again')
+        self.assertIsNotNone(third_history.date_created)
+
+    def test_model_field_history_attribute_returns_all_histories(self):
+        person = Person.objects.create(name='Initial Name')
+
+        histories = FieldHistory.objects.get_for_model_and_field(person, 'name')
+
+        self.assertItemsEqual(list(person.field_history), list(histories))
 
     def test_model_has_get_field_history_method(self):
         person = Person.objects.create(name='Initial Name')

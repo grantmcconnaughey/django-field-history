@@ -22,14 +22,29 @@ Install django-field-history::
 
     pip install django-field-history
 
-Then use it in a project::
+Be sure to put it in INSTALLED_APPS.
+
+.. code-block:: python
+
+    INSTALLED_APPS = [
+        # other apps...
+        'field_history',
+    ]
+
+Then add it to your models.
+
+.. code-block:: python
 
     from field_history import FieldHistoryTracker
 
     class Person(models.Model):
         name = models.CharField(max_length=255)
 
-        history_fields = FieldHistoryTracker(['name'])
+        field_history = FieldHistoryTracker(['name'])
+
+Now each time you change the name field information about that change will be stored in the database.
+
+.. code-block:: python
 
     # No FieldHistory objects yet
     self.assertEqual(FieldHistory.objects.count(), 0)
@@ -37,37 +52,39 @@ Then use it in a project::
     person = Person.objects.create(name='Initial Name')
 
     # Creating an object will make one
-    self.assertEqual(FieldHistory.objects.count(), 1)
+    assert FieldHistory.objects.count() == 1
 
     # This object has some fields on it
     history = FieldHistory.objects.get()
-    self.assertEqual(history.object, person)
-    self.assertEqual(history.field_name, 'name')
-    self.assertEqual(history.field_value, 'Initial Name')
-    self.assertIsNotNone(history.history_date)
+    assert history.object == person
+    assert history.field_name == 'name'
+    assert history.field_value == 'Initial Name'
+    assert history.history_date is not None
 
     # Updating that particular field creates a new FieldHistory
     person.name = 'Updated Name'
     person.save()
-    self.assertEqual(FieldHistory.objects.count(), 2)
+    assert FieldHistory.objects.count() == 2
 
     # You can query FieldHistory objects this way
     histories = FieldHistory.objects.get_for_model_and_field(person, 'name')
-    self.assertQuerysetEqual(person.history_fields.all(), histories)
+    self.assertQuerysetEqual(person.field_history.all(), histories)
 
     # Or using the get_{field_name}_history() method added to your model
     self.assertItemsEqual([person.get_name_history()], [histories])
 
     updated_history = histories.order_by('-history_date').first()
-    self.assertEqual(history.object, person)
-    self.assertEqual(history.field_name, 'name')
-    self.assertEqual(history.field_value, 'Updated Name')
-    self.assertIsNotNone(history.history_date)
+    assert history.object == person
+    assert history.field_name == 'name'
+    assert history.field_value == 'Updated Name'
+    assert history.history_date is not None
 
 Features
 --------
 
-* TODO
+* Keeps a history of all changes to a particular field.
+* Stores the field's name, value, date and time of change, and the user that changed the field.
+* Works with all model field types (except ``ManyToManyField``).
 
 Running Tests
 --------------
