@@ -12,6 +12,15 @@ from .models import Human, Person, Pet, Owner
 
 class TestFieldHistory(TestCase):
 
+    def assertItemsEqual(self, first, second):
+        """
+        An assertItemsEqual that works on Python 2 and 3.
+        """
+        try:
+            return self.assertCountEqual(first, second)  # Python 3
+        except AttributeError as e:
+            super(TestCase, self).assertItemsEqual(first, second)  # Python 2
+
     def test_new_object_creates_field_history(self):
         # No FieldHistory objects yet
         self.assertEqual(FieldHistory.objects.count(), 0)
