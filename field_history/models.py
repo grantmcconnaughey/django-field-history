@@ -26,14 +26,14 @@ class FieldHistory(models.Model):
 
     objects = FieldHistoryManager()
 
+    class Meta:
+        app_label = 'field_history'
+
+    def __str__(self):
+        return '{} field history for {}'.format(self.field_name, self.object)
+
     @property
     def field_value(self):
         instances = serializers.deserialize('json', self.serialized_data)
         instance = list(instances)[0].object
         return getattr(instance, self.field_name)
-
-    def __str__(self):
-        return '{} field history for {}'.format(self.field_name, self.object)
-
-    class Meta:
-        app_label = 'field_history'
