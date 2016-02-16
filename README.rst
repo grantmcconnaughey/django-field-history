@@ -2,11 +2,19 @@
 django-field-history
 =============================
 
-.. image:: https://badge.fury.io/py/django-field-history.png
+.. image:: https://badge.fury.io/py/django-field-history.svg
     :target: https://badge.fury.io/py/django-field-history
 
-.. image:: https://travis-ci.org/grantmcconnaughey/django-field-history.png?branch=master
+.. image:: https://readthedocs.org/projects/django-field-history/badge/?version=latest
+    :target: http://django-field-history.readthedocs.org/en/latest/?badge=latest
+    :alt: Documentation Status
+
+.. image:: https://travis-ci.org/grantmcconnaughey/django-field-history.svg?branch=master
     :target: https://travis-ci.org/grantmcconnaughey/django-field-history
+
+.. image:: https://coveralls.io/repos/github/grantmcconnaughey/django-field-history/badge.svg?branch=master
+    :target: https://coveralls.io/github/grantmcconnaughey/django-field-history?branch=master
+
 
 A Django app to track changes to a model field.
 
