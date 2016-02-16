@@ -45,7 +45,7 @@ class TestFieldHistory(TestCase):
         self.assertEqual(updated_history.field_value, 'Updated Name')
         self.assertIsNotNone(updated_history.date_created)
 
-    def test_model_has_new_field_history_property(self):
+    def test_model_has_get_field_history_method(self):
         person = Person.objects.create(name='Initial Name')
 
         history = FieldHistory.objects.get()

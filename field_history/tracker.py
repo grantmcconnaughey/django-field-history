@@ -137,7 +137,6 @@ class FieldHistoryTracker(object):
             is_new_object = instance.pk is None
             ret = original_save(**kwargs)
             tracker = getattr(instance, self.attname)
-            tracker.set_saved_fields(self.fields)
 
             # Create a FieldHistory for all self.fields that have changed
             for field in self.fields:
@@ -148,6 +147,13 @@ class FieldHistoryTracker(object):
                         field_name=field,
                         serialized_data=data,
                     )
+
+            # Update tracker in case this model is saved again
+            self.field_map = self.get_field_map(instance)
+            tracker = self.tracker_class(instance, self.fields, self.field_map)
+            setattr(instance, self.attname, tracker)
+            tracker.set_saved_fields()
+
             return ret
         instance.save = save
 
