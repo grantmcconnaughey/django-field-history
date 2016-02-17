@@ -46,7 +46,7 @@ Then add it to your models.
     from field_history.tracker import FieldHistoryTracker
 
     class PizzaOrder(models.Model):
-        INVOICE_NUMBER_TYPE = (
+        PIZZA_CHOICES = (
             ('ORDER', 'Ordered'),
             ('COOK', 'Cooking'),
             ('COMPL', 'Complete'),
