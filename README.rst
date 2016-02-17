@@ -1,6 +1,6 @@
-=============================
+====================
 django-field-history
-=============================
+====================
 
 .. image:: https://badge.fury.io/py/django-field-history.svg
     :target: https://badge.fury.io/py/django-field-history
@@ -101,7 +101,7 @@ Features
 * Works with all model field types (except ``ManyToManyField``).
 
 Running Tests
---------------
+-------------
 
 Does the code actually work?
 
@@ -112,7 +112,7 @@ Does the code actually work?
     (myenv) $ python runtests.py
 
 Credits
----------
+-------
 
 Tools used in rendering this package:
 
