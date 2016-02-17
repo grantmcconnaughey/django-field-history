@@ -45,54 +45,59 @@ Then add it to your models.
 
     from field_history.tracker import FieldHistoryTracker
 
-    class Person(models.Model):
-        name = models.CharField(max_length=255)
+    class PizzaOrder(models.Model):
+        INVOICE_NUMBER_TYPE = (
+            ('ORDER', 'Ordered'),
+            ('COOK', 'Cooking'),
+            ('COMPL', 'Complete'),
+        )
+        status = models.CharField(max_length=10, choices=PIZZA_CHOICES)
 
-        field_history = FieldHistoryTracker(['name'])
+        field_history = FieldHistoryTracker(['status'])
 
-Now each time you change the name field information about that change will be stored in the database.
+Now each time you change the order's status field information about that change will be stored in the database.
 
 .. code-block:: python
 
     from field_history.models import FieldHistory
 
     # No FieldHistory objects yet
-    self.assertEqual(FieldHistory.objects.count(), 0)
+    assert FieldHistory.objects.count() == 0
 
     # Creating an object will make one
-    person = Person.objects.create(name='Initial Name')
+    pizza_order = PizzaOrder.objects.create(status='ORDER')
     assert FieldHistory.objects.count() == 1
 
     # This object has some fields on it
     history = FieldHistory.objects.get()
-    assert history.object == person
-    assert history.field_name == 'name'
-    assert history.field_value == 'Initial Name'
+    assert history.object == pizza_order
+    assert history.field_name == 'status'
+    assert history.field_value == 'ORDER'
     assert history.date_created is not None
 
     # Updating that particular field creates a new FieldHistory
-    person.name = 'Updated Name'
-    person.save()
+    pizza_order.status = 'COOK'
+    pizza_order.save()
     assert FieldHistory.objects.count() == 2
 
     # You can query FieldHistory objects this way
-    histories = FieldHistory.objects.get_for_model_and_field(person, 'name')
-    assert list(person.field_history) == list(histories)
+    histories = FieldHistory.objects.get_for_model_and_field(pizza_order, 'status')
+    assert list(pizza_order.field_history) == list(histories)
 
     # Or using the get_{field_name}_history() method added to your model
-    self.assertItemsEqual([person.get_name_history()], [histories])
+    self.assertItemsEqual([pizza_order.get_status_history()], [histories])
 
     updated_history = histories.order_by('-date_created').first()
-    assert history.object == person
-    assert history.field_name == 'name'
-    assert history.field_value == 'Updated Name'
+    assert history.object == pizza_order
+    assert history.field_name == 'status'
+    assert history.field_value == 'COOK'
     assert history.date_created is not None
 
 Features
 --------
 
 * Keeps a history of all changes to a particular field.
-* Stores the field's name, value, date and time of change, and the user that changed the field.
+* Stores the field's name, value, date and time of change.
 * Works with all model field types (except ``ManyToManyField``).
 
 Running Tests
