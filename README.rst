@@ -115,6 +115,5 @@ TO-DO
 -----
 
 * Track the user that updated the field using ``FieldHistory.user``.
-* Add a way to batch up adding ``FieldHistory`` objects. If a model is tracking the history of 3 different fields and all 3 are updated, then create them all in one SQL query. (See https://docs.djangoproject.com/en/1.9/ref/models/querysets/#bulk-create)
 * Add a management command to create initial field history.
 * Add a management command to handle fields that are renamed. Command should update all ``FieldHistory`` entries for models of a particular type.

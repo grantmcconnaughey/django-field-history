@@ -94,16 +94,24 @@ class FieldHistoryTracker(object):
             is_new_object = instance.pk is None
             ret = original_save(**kwargs)
             tracker = getattr(instance, self.attname)
+            field_histories = []
 
             # Create a FieldHistory for all self.fields that have changed
             for field in self.fields:
                 if tracker.has_changed(field) or is_new_object:
-                    data = serializers.serialize('json', [instance], fields=[field])
-                    FieldHistory.objects.create(
+                    data = serializers.serialize('json',
+                                                 [instance],
+                                                 fields=[field])
+                    history = FieldHistory(
                         object=instance,
                         field_name=field,
                         serialized_data=data,
                     )
+                    field_histories.append(history)
+
+            if field_histories:
+                # Create all the FieldHistory objects in one batch
+                FieldHistory.objects.bulk_create(field_histories)
 
             # Update tracker in case this model is saved again
             self.field_map = self.get_field_map(instance)

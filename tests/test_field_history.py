@@ -128,6 +128,32 @@ class TestFieldHistory(TestCase):
         self.assertEqual(history.field_value, birth_date)
         self.assertIsNotNone(history.date_created)
 
+    def test_field_history_tracks_multiple_fields_changed_at_same_time(self):
+        human = Human.objects.create(
+            birth_date=datetime.date(1991, 11, 6),
+            is_female=True,
+            body_temp=98.6,
+            age=18,
+        )
+
+        self.assertEqual(FieldHistory.objects.count(), 4)
+        self.assertEqual(FieldHistory.objects.get_for_model_and_field(human, 'birth_date').count(), 1)
+        self.assertEqual(FieldHistory.objects.get_for_model_and_field(human, 'is_female').count(), 1)
+        self.assertEqual(FieldHistory.objects.get_for_model_and_field(human, 'body_temp').count(), 1)
+        self.assertEqual(FieldHistory.objects.get_for_model_and_field(human, 'age').count(), 1)
+
+        human.birth_date = datetime.date(1992, 11, 6)
+        human.is_female = False
+        human.body_temp = 100.0
+        human.age = 21
+        human.save()
+
+        self.assertEqual(FieldHistory.objects.count(), 8)
+        self.assertEqual(FieldHistory.objects.get_for_model_and_field(human, 'birth_date').count(), 2)
+        self.assertEqual(FieldHistory.objects.get_for_model_and_field(human, 'is_female').count(), 2)
+        self.assertEqual(FieldHistory.objects.get_for_model_and_field(human, 'body_temp').count(), 2)
+        self.assertEqual(FieldHistory.objects.get_for_model_and_field(human, 'age').count(), 2)
+
     def test_field_history_works_with_foreign_key_field(self):
         pet = Pet.objects.create(name='Garfield')
         owner = Owner.objects.create(name='Jon', pet=pet)
