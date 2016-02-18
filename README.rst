@@ -46,12 +46,12 @@ Then add it to your models.
     from field_history.tracker import FieldHistoryTracker
 
     class PizzaOrder(models.Model):
-        PIZZA_CHOICES = (
-            ('ORDER', 'Ordered'),
-            ('COOK', 'Cooking'),
-            ('COMPL', 'Complete'),
+        STATUS_CHOICES = (
+            ('ORDERED', 'Ordered'),
+            ('COOKING', 'Cooking'),
+            ('COMPLETE', 'Complete'),
         )
-        status = models.CharField(max_length=10, choices=PIZZA_CHOICES)
+        status = models.CharField(max_length=64, choices=STATUS_CHOICES)
 
         field_history = FieldHistoryTracker(['status'])
 
@@ -65,18 +65,18 @@ Now each time you change the order's status field information about that change 
     assert FieldHistory.objects.count() == 0
 
     # Creating an object will make one
-    pizza_order = PizzaOrder.objects.create(status='ORDER')
+    pizza_order = PizzaOrder.objects.create(status='ORDERED')
     assert FieldHistory.objects.count() == 1
 
     # This object has some fields on it
     history = FieldHistory.objects.get()
     assert history.object == pizza_order
     assert history.field_name == 'status'
-    assert history.field_value == 'ORDER'
+    assert history.field_value == 'ORDERED'
     assert history.date_created is not None
 
     # Updating that particular field creates a new FieldHistory
-    pizza_order.status = 'COOK'
+    pizza_order.status = 'COOKING'
     pizza_order.save()
     assert FieldHistory.objects.count() == 2
 
@@ -90,7 +90,7 @@ Now each time you change the order's status field information about that change 
     updated_history = histories.order_by('-date_created').first()
     assert history.object == pizza_order
     assert history.field_name == 'status'
-    assert history.field_value == 'COOK'
+    assert history.field_value == 'COOKING'
     assert history.date_created is not None
 
 Features
@@ -110,3 +110,11 @@ Does the code actually work?
     source <YOURVIRTUALENV>/bin/activate
     (myenv) $ pip install -r requirements-test.txt
     (myenv) $ python runtests.py
+
+TO-DO
+-----
+
+* Track the user that updated the field using ``FieldHistory.user``.
+* Add a way to batch up adding ``FieldHistory`` objects. If a model is tracking the history of 3 different fields and all 3 are updated, then create them all in one SQL query. (See https://docs.djangoproject.com/en/1.9/ref/models/querysets/#bulk-create)
+* Add a management command to create initial field history.
+* Add a management command to handle fields that are renamed. Command should update all ``FieldHistory`` entries for models of a particular type.
