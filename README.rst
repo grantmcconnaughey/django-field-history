@@ -23,6 +23,13 @@ Documentation
 
 The full documentation is at https://django-field-history.readthedocs.org.
 
+Features
+--------
+
+* Keeps a history of all changes to a particular field.
+* Stores the field's name, value, date and time of change, and the user that changed it.
+* Works with all model field types (except ``ManyToManyField``).
+
 Quickstart
 ----------
 
@@ -93,13 +100,6 @@ Now each time you change the order's status field information about that change 
     assert history.field_value == 'COOKING'
     assert history.date_created is not None
 
-Features
---------
-
-* Keeps a history of all changes to a particular field.
-* Stores the field's name, value, date and time of change.
-* Works with all model field types (except ``ManyToManyField``).
-
 Management Commands
 -------------------
 
@@ -108,6 +108,24 @@ django-field-history comes with one management command called ``createinitialfie
 ::
 
     python manage.py createinitialfieldhistory
+
+
+Storing Which User Changed the Field
+------------------------------------
+
+To store the user that changed a field add a ``_field_history_user`` property to your model. This property should return the user you would like stored on ``FieldHistory`` when your field is updated.
+
+.. code-block:: python
+
+    class Pizza(models.Model):
+        name = models.CharField(max_length=255)
+        updated_by = models.ForeignKey('auth.User')
+
+        field_history = FieldHistoryTracker(['name'])
+
+        @property
+        def _field_history_user(self):
+            return self.updated_by
 
 Running Tests
 -------------
@@ -123,5 +141,4 @@ Does the code actually work?
 TO-DO
 -----
 
-* Track the user that updated the field using ``FieldHistory.user``.
 * Add a management command to handle fields that are renamed. Command should update all ``FieldHistory`` entries for models of a particular type.

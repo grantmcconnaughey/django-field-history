@@ -3,6 +3,7 @@
 import datetime
 from unittest.case import skip
 
+from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.test import TestCase
 from django.utils import six
@@ -28,6 +29,22 @@ class TestFieldHistory(TestCase):
         self.assertEqual(history.field_name, 'name')
         self.assertEqual(history.field_value, 'Initial Name')
         self.assertIsNotNone(history.date_created)
+        self.assertIsNone(history.user)
+
+    def test_field_history_user_is_from_field_history_user_property(self):
+        user = get_user_model().objects.create(
+            username='test',
+            email='test@test.com')
+        person = Person.objects.create(
+            name='Initial Name',
+            created_by=user)
+
+        history = person.get_name_history().get()
+        self.assertEqual(history.object, person)
+        self.assertEqual(history.field_name, 'name')
+        self.assertEqual(history.field_value, 'Initial Name')
+        self.assertIsNotNone(history.date_created)
+        self.assertEqual(history.user, user)
 
     def test_updated_object_creates_additional_field_history(self):
         person = Person.objects.create(name='Initial Name')

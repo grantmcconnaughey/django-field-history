@@ -102,10 +102,14 @@ class FieldHistoryTracker(object):
                     data = serializers.serialize('json',
                                                  [instance],
                                                  fields=[field])
+                    user = None
+                    if hasattr(instance, '_field_history_user'):
+                        user = getattr(instance, '_field_history_user')
                     history = FieldHistory(
                         object=instance,
                         field_name=field,
                         serialized_data=data,
+                        user=user,
                     )
                     field_histories.append(history)
 

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 from field_history.tracker import FieldHistoryTracker
@@ -16,8 +17,13 @@ class Owner(models.Model):
 
 class Person(models.Model):
     name = models.CharField(max_length=255)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
 
     field_history = FieldHistoryTracker(['name'])
+
+    @property
+    def _field_history_user(self):
+        return self.created_by
 
 
 class Human(models.Model):
