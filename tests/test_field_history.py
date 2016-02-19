@@ -3,6 +3,7 @@
 import datetime
 from unittest.case import skip
 
+from django.core.management import call_command
 from django.test import TestCase
 from django.utils import six
 from field_history.models import FieldHistory
@@ -174,3 +175,22 @@ class TestFieldHistory(TestCase):
         self.assertEqual(history.object, owner)
         self.assertEqual(history.field_name, 'pet')
         self.assertEqual(history.field_value, None)
+
+    def test_createinitialfieldhistory_command_no_objects(self):
+        call_command('createinitialfieldhistory')
+
+        self.assertEqual(FieldHistory.objects.count(), 0)
+
+    def test_createinitialfieldhistory_command_one_object(self):
+        person = Person.objects.create(name='Initial Name')
+        FieldHistory.objects.all().delete()
+
+        call_command('createinitialfieldhistory')
+
+        self.assertEqual(FieldHistory.objects.count(), 1)
+
+        history = FieldHistory.objects.get()
+        self.assertEqual(history.object, person)
+        self.assertEqual(history.field_name, 'name')
+        self.assertEqual(history.field_value, 'Initial Name')
+        self.assertIsNotNone(history.date_created)

@@ -115,5 +115,4 @@ TO-DO
 -----
 
 * Track the user that updated the field using ``FieldHistory.user``.
-* Add a management command to create initial field history.
 * Add a management command to handle fields that are renamed. Command should update all ``FieldHistory`` entries for models of a particular type.
