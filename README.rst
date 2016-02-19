@@ -100,6 +100,15 @@ Features
 * Stores the field's name, value, date and time of change.
 * Works with all model field types (except ``ManyToManyField``).
 
+Management Commands
+-------------------
+
+django-field-history comes with one management command called ``createinitialfieldhistory``. This command will inspect all of the models in your application and create ``FieldHistory`` objects for the models that have a ``FieldHistoryTracker``. Run this the first time you install django-field-history.
+
+::
+
+    python manage.py createinitialfieldhistory
+
 Running Tests
 -------------
 
