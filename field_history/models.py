@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import json
-
 from django.conf import settings
 try:
     from django.contrib.contenttypes.fields import GenericForeignKey

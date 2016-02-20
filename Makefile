@@ -26,9 +26,9 @@ makemigrations:
 	python manage.py makemigrations field_history
 
 lint:
-	flake8 field_history tests
+	flake8 field_history
 
-test:
+test: lint
 	python runtests.py tests
 
 coverage:

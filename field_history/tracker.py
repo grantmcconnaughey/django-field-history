@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 from copy import deepcopy
 
 from django.core import serializers
-from django.core.exceptions import FieldError
 from django.db import models
 from django.utils.functional import curry
 
@@ -81,6 +80,7 @@ class FieldHistoryTracker(object):
 
     def patch_save(self, instance):
         original_save = instance.save
+
         def save(**kwargs):
             is_new_object = instance.pk is None
             ret = original_save(**kwargs)
