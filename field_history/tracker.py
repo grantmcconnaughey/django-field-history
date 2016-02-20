@@ -11,21 +11,18 @@ from .models import FieldHistory
 
 
 class FieldInstanceTracker(object):
-    def __init__(self, instance, fields, field_map):
+    def __init__(self, instance, fields):
         self.instance = instance
         self.fields = fields
-        self.field_map = field_map
 
     def get_field_value(self, field):
-        return getattr(self.instance, self.field_map[field])
+        return getattr(self.instance, field)
 
     def set_saved_fields(self, fields=None):
         if not self.instance.pk:
             self.saved_data = {}
         elif not fields:
             self.saved_data = self.current()
-        else:
-            self.saved_data.update(**self.current(fields=fields))
 
         # preventing mutable fields side effects
         for field, field_value in self.saved_data.items():
@@ -51,18 +48,10 @@ class FieldHistoryTracker(object):
 
     tracker_class = FieldInstanceTracker
 
-    def __init__(self, fields=None):
-        if fields is None:
-            fields = []
+    def __init__(self, fields):
+        if not fields:
+            raise ValueError("Can't track zero fields")
         self.fields = set(fields)
-
-    def get_field_map(self, cls):
-        """Returns dict mapping fields names to model attribute names"""
-        field_map = dict((field, field) for field in self.fields)
-        all_fields = dict((f.name, f.attname) for f in cls._meta.local_fields)
-        field_map.update(**dict((k, v) for (k, v) in all_fields.items()
-                                if k in field_map))
-        return field_map
 
     def contribute_to_class(self, cls, name):
         setattr(cls, '_get_field_history', _get_field_history)
@@ -75,7 +64,6 @@ class FieldHistoryTracker(object):
 
     def finalize_class(self, sender, **kwargs):
         self.fields = self.fields
-        self.field_map = self.get_field_map(sender)
         models.signals.post_init.connect(self.initialize_tracker)
         self.model_class = sender
         setattr(sender, self.name, self)
@@ -83,10 +71,13 @@ class FieldHistoryTracker(object):
     def initialize_tracker(self, sender, instance, **kwargs):
         if not isinstance(instance, self.model_class):
             return  # Only init instances of given model (including children)
-        tracker = self.tracker_class(instance, self.fields, self.field_map)
+        self._inititalize_tracker(instance)
+        self.patch_save(instance)
+
+    def _inititalize_tracker(self, instance):
+        tracker = self.tracker_class(instance, self.fields)
         setattr(instance, self.attname, tracker)
         tracker.set_saved_fields()
-        self.patch_save(instance)
 
     def patch_save(self, instance):
         original_save = instance.save
@@ -118,10 +109,7 @@ class FieldHistoryTracker(object):
                 FieldHistory.objects.bulk_create(field_histories)
 
             # Update tracker in case this model is saved again
-            self.field_map = self.get_field_map(instance)
-            tracker = self.tracker_class(instance, self.fields, self.field_map)
-            setattr(instance, self.attname, tracker)
-            tracker.set_saved_fields()
+            self._inititalize_tracker(instance)
 
             return ret
         instance.save = save

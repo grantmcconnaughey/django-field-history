@@ -14,6 +14,14 @@ from .models import Human, Person, Pet, Owner
 
 class TestFieldHistory(TestCase):
 
+    def test_str(self):
+        person = Person.objects.create(name='Initial Name')
+
+        history = FieldHistory.objects.get()
+
+        self.assertEqual(str(history),
+                         'name field history for {}'.format(str(person)))
+
     def test_new_object_creates_field_history(self):
         # No FieldHistory objects yet
         self.assertEqual(FieldHistory.objects.count(), 0)
