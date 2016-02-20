@@ -4,15 +4,51 @@ import datetime
 from unittest.case import skip
 
 from django.contrib.auth import get_user_model
-from django.core.management import call_command
+from django.core.management import BaseCommand, CommandError, call_command
 from django.test import TestCase
 from django.utils import six
 from field_history.models import FieldHistory
 
-from .models import Human, Person, Pet, Owner
+from .models import Human, Owner, Person, Pet, PizzaOrder
 
 
-class TestFieldHistory(TestCase):
+class FieldHistoryTests(TestCase):
+
+    def test_readme(self):
+        """Update this test when changes are made to the README.rst example."""
+        # No FieldHistory objects yet
+        assert FieldHistory.objects.count() == 0
+
+        # Creating an object will make one
+        pizza_order = PizzaOrder.objects.create(status='ORDERED')
+        assert FieldHistory.objects.count() == 1
+
+        # This object has some fields on it
+        history = FieldHistory.objects.get()
+        assert history.object == pizza_order
+        assert history.field_name == 'status'
+        assert history.field_value == 'ORDERED'
+        assert history.date_created is not None
+
+        # You can query FieldHistory using the get_{field_name}_history()
+        # method added to your model
+        histories = pizza_order.get_status_history()
+        assert list(FieldHistory.objects.all()) == list(histories)
+
+        # Or using the custom FieldHistory manager
+        histories2 = FieldHistory.objects.get_for_model_and_field(pizza_order, 'status')
+        assert list(histories) == list(histories2)
+
+        # Updating that particular field creates a new FieldHistory
+        pizza_order.status = 'COOKING'
+        pizza_order.save()
+        assert FieldHistory.objects.count() == 2
+
+        updated_history = histories.latest()
+        assert updated_history.object == pizza_order
+        assert updated_history.field_name == 'status'
+        assert updated_history.field_value == 'COOKING'
+        assert updated_history.date_created is not None
 
     def test_str(self):
         person = Person.objects.create(name='Initial Name')
@@ -201,6 +237,9 @@ class TestFieldHistory(TestCase):
         self.assertEqual(history.field_name, 'pet')
         self.assertEqual(history.field_value, None)
 
+
+class ManagementCommandsTests(TestCase):
+
     def test_createinitialfieldhistory_command_no_objects(self):
         call_command('createinitialfieldhistory')
 
@@ -219,3 +258,41 @@ class TestFieldHistory(TestCase):
         self.assertEqual(history.field_name, 'name')
         self.assertEqual(history.field_value, 'Initial Name')
         self.assertIsNotNone(history.date_created)
+
+    def test_renamefieldhistory(self):
+        person = Person.objects.create(name='Initial Name')
+
+        self.assertEqual(FieldHistory.objects.filter(field_name='name').count(), 1)
+
+        call_command(
+            'renamefieldhistory',
+            model='tests.Person',
+            from_field='name',
+            to_field='name2')
+
+        self.assertEqual(FieldHistory.objects.filter(field_name='name').count(), 0)
+        self.assertEqual(FieldHistory.objects.filter(field_name='name2').count(), 1)
+
+    def test_renamefieldhistory_model_arg_is_required(self):
+        person = Person.objects.create(name='Initial Name')
+
+        self.assertEqual(FieldHistory.objects.filter(field_name='name').count(), 1)
+
+        with self.assertRaises(CommandError):
+            call_command('renamefieldhistory', from_field='name', to_field='name2')
+
+    def test_renamefieldhistory_from_field_arg_is_required(self):
+        person = Person.objects.create(name='Initial Name')
+
+        self.assertEqual(FieldHistory.objects.filter(field_name='name').count(), 1)
+
+        with self.assertRaises(CommandError):
+            call_command('renamefieldhistory', model='tests.Person', to_field='name2')
+
+    def test_renamefieldhistory_to_field_arg_is_required(self):
+        person = Person.objects.create(name='Initial Name')
+
+        self.assertEqual(FieldHistory.objects.filter(field_name='name').count(), 1)
+
+        with self.assertRaises(CommandError):
+            call_command('renamefieldhistory', model='tests.Person', from_field='name')

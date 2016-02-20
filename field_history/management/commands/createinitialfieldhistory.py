@@ -1,5 +1,4 @@
 import inspect
-from sys import stdout
 
 from django.apps import apps
 from django.core import serializers
@@ -22,7 +21,7 @@ class Command(BaseCommand):
                     break
 
         if models:
-            stdout.write('Creating initial field history for {} models\n'.format(len(models)))
+            self.stdout.write('Creating initial field history for {} models\n'.format(len(models)))
 
             for model_fields in models:
                 model = model_fields[0]
@@ -39,4 +38,4 @@ class Command(BaseCommand):
                             serialized_data=data,
                         )
         else:
-            stdout.write('There are no models to create field history for.')
+            self.stdout.write('There are no models to create field history for.')

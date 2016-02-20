@@ -16,7 +16,7 @@ django-field-history
     :target: https://coveralls.io/github/grantmcconnaughey/django-field-history?branch=master
 
 
-A Django app to track changes to a model field.
+A Django app to track changes to a model field. For Python 2.7/3.3+ and Django 1.8+.
 
 Documentation
 -------------
@@ -26,7 +26,7 @@ The full documentation is at https://django-field-history.readthedocs.org.
 Features
 --------
 
-* Keeps a history of all changes to a particular field.
+* Keeps a history of all changes to a particular model's field.
 * Stores the field's name, value, date and time of change, and the user that changed it.
 * Works with all model field types (except ``ManyToManyField``).
 
@@ -82,33 +82,64 @@ Now each time you change the order's status field information about that change 
     assert history.field_value == 'ORDERED'
     assert history.date_created is not None
 
+    # You can query FieldHistory using the get_{field_name}_history()
+    # method added to your model
+    histories = pizza_order.get_status_history()
+    assert list(FieldHistory.objects.all()) == list(histories)
+
+    # Or using the custom FieldHistory manager
+    histories2 = FieldHistory.objects.get_for_model_and_field(pizza_order, 'status')
+    assert list(histories) == list(histories2)
+
     # Updating that particular field creates a new FieldHistory
     pizza_order.status = 'COOKING'
     pizza_order.save()
     assert FieldHistory.objects.count() == 2
 
-    # You can query FieldHistory objects this way
-    histories = FieldHistory.objects.get_for_model_and_field(pizza_order, 'status')
-    assert list(pizza_order.field_history) == list(histories)
-
-    # Or using the get_{field_name}_history() method added to your model
-    self.assertItemsEqual([pizza_order.get_status_history()], [histories])
-
-    updated_history = histories.order_by('-date_created').first()
-    assert history.object == pizza_order
-    assert history.field_name == 'status'
-    assert history.field_value == 'COOKING'
-    assert history.date_created is not None
+    updated_history = histories.latest()
+    assert updated_history.object == pizza_order
+    assert updated_history.field_name == 'status'
+    assert updated_history.field_value == 'COOKING'
+    assert updated_history.date_created is not None
 
 Management Commands
 -------------------
 
-django-field-history comes with one management command called ``createinitialfieldhistory``. This command will inspect all of the models in your application and create ``FieldHistory`` objects for the models that have a ``FieldHistoryTracker``. Run this the first time you install django-field-history.
+django-field-history comes with a few management commands.
+
+createinitialfieldhistory
++++++++++++++++++++++++++
+
+This command will inspect all of the models in your application and create ``FieldHistory`` objects for the models that have a ``FieldHistoryTracker``. Run this the first time you install django-field-history.
 
 ::
 
     python manage.py createinitialfieldhistory
 
+renamefieldhistory
+++++++++++++++++++
+
+Use this command after changing a model field name of a field you track with ``FieldHistoryTracker``::
+
+    python manage.py renamefieldhistory --model=app_label.model_name --from_field=old_field_name --to_field=new_field_name
+
+For instance, if you have this model::
+
+    class Person(models.Model):
+        username = models.CharField(max_length=255)
+
+        field_history = FieldHistoryTracker(['username'])
+
+And you change the ``username`` field name to ``handle``::
+
+    class Person(models.Model):
+        handle = models.CharField(max_length=255)
+
+        field_history = FieldHistoryTracker(['handle'])
+
+You will need to also update the ``field_name`` value in all ``FieldHistory`` objects that point to this model::
+
+    python manage.py renamefieldhistory --model=myapp.Person --from_field=username --to_field=handle
 
 Storing Which User Changed the Field
 ------------------------------------
@@ -137,8 +168,3 @@ Does the code actually work?
     source <YOURVIRTUALENV>/bin/activate
     (myenv) $ pip install -r requirements-test.txt
     (myenv) $ python runtests.py
-
-TO-DO
------
-
-* Add a management command to handle fields that are renamed. Command should update all ``FieldHistory`` entries for models of a particular type.

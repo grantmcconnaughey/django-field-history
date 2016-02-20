@@ -34,3 +34,14 @@ class Human(models.Model):
 
     field_history = FieldHistoryTracker(['age', 'is_female',
                                          'body_temp', 'birth_date'])
+
+
+class PizzaOrder(models.Model):
+    STATUS_CHOICES = (
+        ('ORDERED', 'Ordered'),
+        ('COOKING', 'Cooking'),
+        ('COMPLETE', 'Complete'),
+    )
+    status = models.CharField(max_length=64, choices=STATUS_CHOICES)
+
+    field_history = FieldHistoryTracker(['status'])

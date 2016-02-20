@@ -27,6 +27,7 @@ class FieldHistory(models.Model):
 
     class Meta:
         app_label = 'field_history'
+        get_latest_by = 'date_created'
 
     def __str__(self):
         return '{} field history for {}'.format(self.field_name, self.object)
