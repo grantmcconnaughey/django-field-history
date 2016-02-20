@@ -3,8 +3,8 @@
 History
 -------
 
-0.3.0 (Not released)
-++++++++++++++++++
+0.3.0 (February 20, 2016)
++++++++++++++++++++++++++
 
 * ``FieldHistory`` objects are now created using ``bulk_create``, which means only one query will be executed, even when changing multiple fields at the same time.
 * Added a way to store which user updated a field.
@@ -12,7 +12,7 @@ History
 * Added ``createinitialfieldhistory`` management command.
 * Added ``renamefieldhistory`` management command.
 
-0.2.0 (2016-02-17)
-++++++++++++++++++
+0.2.0 (February 17, 2016)
++++++++++++++++++++++++++
 
 * First release on PyPI.
