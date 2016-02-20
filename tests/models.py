@@ -28,7 +28,7 @@ class Person(models.Model):
 
 class Human(models.Model):
     age = models.IntegerField(blank=True, null=True)
-    is_female = models.BooleanField()
+    is_female = models.BooleanField(default=True)
     body_temp = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
     birth_date = models.DateField(blank=True, null=True)
 
