@@ -5,6 +5,7 @@ from unittest.case import skip
 
 from django.contrib.auth import get_user_model
 from django.core.management import BaseCommand, CommandError, call_command
+from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils import six
 from field_history.models import FieldHistory
@@ -87,6 +88,26 @@ class FieldHistoryTests(TestCase):
         self.assertEqual(history.object, person)
         self.assertEqual(history.field_name, 'name')
         self.assertEqual(history.field_value, 'Initial Name')
+        self.assertIsNotNone(history.date_created)
+        self.assertEqual(history.user, user)
+
+    def test_field_history_user_is_from_request_user(self):
+        user = get_user_model().objects.create(
+            username='test',
+            email='test@test.com')
+        user.set_password('password')
+        user.save()
+        self.client.login(username='test', password='password')
+
+        response = self.client.get(reverse("index"))
+
+        # Make sure the view worked
+        self.assertEqual(response.status_code, 200)
+        order = PizzaOrder.objects.get()
+        history = order.get_status_history().get()
+        self.assertEqual(history.object, order)
+        self.assertEqual(history.field_name, 'status')
+        self.assertEqual(history.field_value, 'ORDERED')
         self.assertIsNotNone(history.date_created)
         self.assertEqual(history.user, user)
 

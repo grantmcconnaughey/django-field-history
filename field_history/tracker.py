@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from copy import deepcopy
+import threading
 
 from django.core import serializers
 from django.db import models
@@ -46,6 +47,7 @@ class FieldInstanceTracker(object):
 class FieldHistoryTracker(object):
 
     tracker_class = FieldInstanceTracker
+    thread = threading.local()
 
     def __init__(self, fields):
         if not fields:
@@ -93,9 +95,7 @@ class FieldHistoryTracker(object):
                     data = serializers.serialize('json',
                                                  [instance],
                                                  fields=[field])
-                    user = None
-                    if hasattr(instance, '_field_history_user'):
-                        user = getattr(instance, '_field_history_user')
+                    user = self.get_field_history_user(instance)
                     history = FieldHistory(
                         object=instance,
                         field_name=field,
@@ -113,6 +113,17 @@ class FieldHistoryTracker(object):
 
             return ret
         instance.save = save
+
+    def get_field_history_user(self, instance):
+        try:
+            return instance._field_history_user
+        except AttributeError:
+            try:
+                if self.thread.request.user.is_authenticated():
+                    return self.thread.request.user
+                return None
+            except AttributeError:
+                return None
 
     def __get__(self, instance, owner):
         if instance is None:

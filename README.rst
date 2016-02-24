@@ -143,7 +143,16 @@ You will need to also update the ``field_name`` value in all ``FieldHistory`` ob
 Storing Which User Changed the Field
 ------------------------------------
 
-To store the user that changed a field add a ``_field_history_user`` property to your model. This property should return the user you would like stored on ``FieldHistory`` when your field is updated.
+There are two ways to store the user that changed your model field. The simplest way is to use **the logged in user** that made the request. To do this, add the ``FieldHistoryMiddleware`` class to your ``MIDDLEWARE_CLASSES`` setting::
+
+    MIDDLEWARE_CLASSES = (
+        "django.contrib.sessions.middleware.SessionMiddleware",
+        "django.middleware.common.CommonMiddleware",
+        "django.contrib.auth.middleware.AuthenticationMiddleware",
+        "field_history.middleware.FieldHistoryMiddleware",
+    )
+
+Alternatively, you can add a ``_field_history_user`` property to the model that has fields you are tracking. This property should return the user you would like stored on ``FieldHistory`` when your field is updated.
 
 .. code-block:: python
 
