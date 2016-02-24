@@ -3,7 +3,7 @@
 History
 -------
 
-0.4.0 (Not released)
+0.4.0 (February 24, 2016)
 +++++++++++++++++++++++++
 * Added a way to automatically store the logged in user on ``FieldHistory.user``.
 
