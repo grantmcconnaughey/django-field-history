@@ -4,10 +4,13 @@ from copy import deepcopy
 import threading
 
 from django.core import serializers
+from django.conf import settings
 from django.db import models
 from django.utils.functional import curry
 
 from .models import FieldHistory
+
+SERIALIZER_NAME = getattr(settings, 'FIELD_HISTORY_SERIALIZER_NAME', 'json')
 
 
 class FieldInstanceTracker(object):
@@ -92,7 +95,7 @@ class FieldHistoryTracker(object):
             # Create a FieldHistory for all self.fields that have changed
             for field in self.fields:
                 if tracker.has_changed(field) or is_new_object:
-                    data = serializers.serialize('json',
+                    data = serializers.serialize(SERIALIZER_NAME,
                                                  [instance],
                                                  fields=[field])
                     user = self.get_field_history_user(instance)
