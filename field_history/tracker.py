@@ -10,7 +10,9 @@ from django.utils.functional import curry
 
 from .models import FieldHistory
 
-SERIALIZER_NAME = getattr(settings, 'FIELD_HISTORY_SERIALIZER_NAME', 'json')
+
+def get_serializer_name():
+    return getattr(settings, 'FIELD_HISTORY_SERIALIZER_NAME', 'json')
 
 
 class FieldInstanceTracker(object):
@@ -95,7 +97,7 @@ class FieldHistoryTracker(object):
             # Create a FieldHistory for all self.fields that have changed
             for field in self.fields:
                 if tracker.has_changed(field) or is_new_object:
-                    data = serializers.serialize(SERIALIZER_NAME,
+                    data = serializers.serialize(get_serializer_name(),
                                                  [instance],
                                                  fields=[field])
                     user = self.get_field_history_user(instance)
