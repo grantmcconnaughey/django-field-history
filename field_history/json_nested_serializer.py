@@ -10,15 +10,19 @@ from __future__ import unicode_literals
 
 import warnings
 
-from django.utils.deprecation import RemovedInDjango19Warning
 from django.core.serializers.json import Serializer as JsonSerializer
 from django.core.serializers.json import Deserializer
 from django.utils import six
 
+try:
+    from django.utils.deprecation import RemovedInDjango19Warning
+except ImportError:
+    RemovedInDjango19Warning = None
+
 
 class Serializer(JsonSerializer):
     """
-    Convert a queryset to JSON.
+    Convert a queryset to JSON.q
     """
     def serialize(self, queryset, **options):
         """
@@ -29,7 +33,7 @@ class Serializer(JsonSerializer):
         self.stream = options.pop("stream", six.StringIO())
         self.selected_fields = options.pop("fields", None)
         self.use_natural_keys = options.pop("use_natural_keys", False)
-        if self.use_natural_keys:
+        if self.use_natural_keys and RemovedInDjango19Warning is not None:
             warnings.warn("``use_natural_keys`` is deprecated; use ``use_natural_foreign_keys`` instead.",
                 RemovedInDjango19Warning)
         self.use_natural_foreign_keys = options.pop('use_natural_foreign_keys', False) or self.use_natural_keys
