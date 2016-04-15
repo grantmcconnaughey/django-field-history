@@ -5,7 +5,7 @@ from django.core import serializers
 from django.core.management import BaseCommand
 
 from field_history.models import FieldHistory
-from field_history.tracker import FieldHistoryTracker
+from field_history.tracker import FieldHistoryTracker, SERIALIZER_NAME
 
 
 class Command(BaseCommand):
@@ -29,7 +29,7 @@ class Command(BaseCommand):
 
                 for obj in model._default_manager.all():
                     for field in list(fields):
-                        data = serializers.serialize('json',
+                        data = serializers.serialize(SERIALIZER_NAME,
                                                      [obj],
                                                      fields=[field])
                         FieldHistory.objects.create(

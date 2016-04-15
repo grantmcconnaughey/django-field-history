@@ -18,6 +18,7 @@ install:
 script: coverage run --source field_history runtests.py tests
 
 env:
+  - DJANGO=1.7.5
   - DJANGO=1.8.8
   - DJANGO=1.9.2
 
