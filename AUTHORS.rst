@@ -10,7 +10,7 @@ Development Lead
 Contributors
 ------------
 
-None yet. Why not be the first?
+* Boris Shifrin <https://github.com/ramusus>
 
 Background
 ----------
