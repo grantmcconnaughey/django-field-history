@@ -18,18 +18,18 @@ install:
 script: coverage run --source field_history runtests.py tests
 
 env:
-  - DJANGO=1.7.5
-  - DJANGO=1.8.8
-  - DJANGO=1.9.2
+  - DJANGO=1.7.11
+  - DJANGO=1.8.12
+  - DJANGO=1.9.5
 
 matrix:
   exclude:
     - python: 3.2
-      env: DJANGO=1.9.2
+      env: DJANGO=1.9.5
     - python: 3.3
-      env: DJANGO=1.9.2
+      env: DJANGO=1.9.5
     - python: 3.5
-      env: DJANGO=1.7.5
+      env: DJANGO=1.7.11
 
 after_success:
   - coveralls
