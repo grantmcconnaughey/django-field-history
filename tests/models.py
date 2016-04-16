@@ -8,13 +8,6 @@ class Pet(models.Model):
     name = models.CharField(max_length=255)
 
 
-class Owner(models.Model):
-    name = models.CharField(max_length=255)
-    pet = models.ForeignKey(Pet, blank=True, null=True)
-
-    field_history = FieldHistoryTracker(['pet'])
-
-
 class Person(models.Model):
     name = models.CharField(max_length=255)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
@@ -24,6 +17,12 @@ class Person(models.Model):
     @property
     def _field_history_user(self):
         return self.created_by
+
+
+class Owner(Person):
+    pet = models.ForeignKey(Pet, blank=True, null=True)
+
+    field_history = FieldHistoryTracker(['name', 'pet'])
 
 
 class Human(models.Model):

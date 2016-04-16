@@ -16,7 +16,7 @@ class FieldHistory(models.Model):
     object_id = models.TextField(db_index=True)
     content_type = models.ForeignKey('contenttypes.ContentType', db_index=True)
     object = GenericForeignKey()
-    field_name = models.CharField(max_length=500)
+    field_name = models.CharField(max_length=500, db_index=True)
     serialized_data = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True, db_index=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)

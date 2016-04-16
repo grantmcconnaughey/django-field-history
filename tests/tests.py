@@ -1,16 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import datetime
-from unittest.case import skip
 
 from django.contrib.auth import get_user_model
-from django.core.management import BaseCommand, CommandError, call_command
+from django.core.management import CommandError, call_command
 from django.core.urlresolvers import reverse
+from django.test.utils import override_settings
 from django.test import TestCase
 from django.utils import six
 from field_history.models import FieldHistory
 
 from .models import Human, Owner, Person, Pet, PizzaOrder
+
+JSON_NESTED_SETTINGS = dict(FIELD_HISTORY_SERIALIZER_NAME='json_nested',
+                            SERIALIZATION_MODULES={'json_nested': 'field_history.json_nested_serializer'})
 
 
 class FieldHistoryTests(TestCase):
@@ -258,6 +261,17 @@ class FieldHistoryTests(TestCase):
         self.assertEqual(history.field_name, 'pet')
         self.assertEqual(history.field_value, None)
 
+    @override_settings(**JSON_NESTED_SETTINGS)
+    def test_field_history_works_with_field_of_parent_model(self):
+
+        owner = Owner.objects.create(name='Jon')
+
+        history = owner.get_name_history()[0]
+
+        self.assertEqual(history.object, owner)
+        self.assertEqual(history.field_name, 'name')
+        self.assertEqual(history.field_value, 'Jon')
+
 
 class ManagementCommandsTests(TestCase):
 
@@ -281,7 +295,7 @@ class ManagementCommandsTests(TestCase):
         self.assertIsNotNone(history.date_created)
 
     def test_renamefieldhistory(self):
-        person = Person.objects.create(name='Initial Name')
+        Person.objects.create(name='Initial Name')
 
         self.assertEqual(FieldHistory.objects.filter(field_name='name').count(), 1)
 
@@ -295,7 +309,7 @@ class ManagementCommandsTests(TestCase):
         self.assertEqual(FieldHistory.objects.filter(field_name='name2').count(), 1)
 
     def test_renamefieldhistory_model_arg_is_required(self):
-        person = Person.objects.create(name='Initial Name')
+        Person.objects.create(name='Initial Name')
 
         self.assertEqual(FieldHistory.objects.filter(field_name='name').count(), 1)
 
@@ -303,7 +317,7 @@ class ManagementCommandsTests(TestCase):
             call_command('renamefieldhistory', from_field='name', to_field='name2')
 
     def test_renamefieldhistory_from_field_arg_is_required(self):
-        person = Person.objects.create(name='Initial Name')
+        Person.objects.create(name='Initial Name')
 
         self.assertEqual(FieldHistory.objects.filter(field_name='name').count(), 1)
 
@@ -311,7 +325,7 @@ class ManagementCommandsTests(TestCase):
             call_command('renamefieldhistory', model='tests.Person', to_field='name2')
 
     def test_renamefieldhistory_to_field_arg_is_required(self):
-        person = Person.objects.create(name='Initial Name')
+        Person.objects.create(name='Initial Name')
 
         self.assertEqual(FieldHistory.objects.filter(field_name='name').count(), 1)
 

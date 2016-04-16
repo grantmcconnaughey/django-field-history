@@ -32,9 +32,9 @@ Example:
             help='The new model field name')
 
     def handle(self, *args, **options):
-        model_name = options['model']
-        from_field = options['from_field']
-        to_field = options['to_field']
+        model_name = options.get('model')
+        from_field = options.get('from_field')
+        to_field = options.get('to_field')
 
         if not model_name:
             raise CommandError('--model_name is a required argument')
