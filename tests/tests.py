@@ -263,7 +263,6 @@ class FieldHistoryTests(TestCase):
 
     @override_settings(**JSON_NESTED_SETTINGS)
     def test_field_history_works_with_field_of_parent_model(self):
-
         owner = Owner.objects.create(name='Jon')
 
         history = owner.get_name_history()[0]

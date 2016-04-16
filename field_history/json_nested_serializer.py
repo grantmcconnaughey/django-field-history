@@ -11,7 +11,6 @@ from __future__ import unicode_literals
 import warnings
 
 from django.core.serializers.json import Serializer as JsonSerializer
-from django.core.serializers.json import Deserializer
 from django.utils import six
 
 try:
@@ -22,7 +21,7 @@ except ImportError:
 
 class Serializer(JsonSerializer):
     """
-    Convert a queryset to JSON.q
+    Convert a queryset to JSON.
     """
     def serialize(self, queryset, **options):
         """
@@ -35,7 +34,7 @@ class Serializer(JsonSerializer):
         self.use_natural_keys = options.pop("use_natural_keys", False)
         if self.use_natural_keys and RemovedInDjango19Warning is not None:
             warnings.warn("``use_natural_keys`` is deprecated; use ``use_natural_foreign_keys`` instead.",
-                RemovedInDjango19Warning)
+                          RemovedInDjango19Warning)
         self.use_natural_foreign_keys = options.pop('use_natural_foreign_keys', False) or self.use_natural_keys
         self.use_natural_primary_keys = options.pop('use_natural_primary_keys', False)
 
