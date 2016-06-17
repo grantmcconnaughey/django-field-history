@@ -293,6 +293,10 @@ class ManagementCommandsTests(TestCase):
         self.assertEqual(history.field_value, 'Initial Name')
         self.assertIsNotNone(history.date_created)
 
+        call_command('createinitialfieldhistory')
+
+        self.assertEqual(FieldHistory.objects.count(), 1)
+
     def test_renamefieldhistory(self):
         Person.objects.create(name='Initial Name')
 

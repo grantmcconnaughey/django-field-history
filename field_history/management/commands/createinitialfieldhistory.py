@@ -29,13 +29,14 @@ class Command(BaseCommand):
 
                 for obj in model._default_manager.all():
                     for field in list(fields):
-                        data = serializers.serialize(get_serializer_name(),
-                                                     [obj],
-                                                     fields=[field])
-                        FieldHistory.objects.create(
-                            object=obj,
-                            field_name=field,
-                            serialized_data=data,
-                        )
+                        if not FieldHistory.objects.filter(object_id=obj.id, field_name=field).exists():
+                            data = serializers.serialize(get_serializer_name(),
+                                                         [obj],
+                                                         fields=[field])
+                            FieldHistory.objects.create(
+                                object=obj,
+                                field_name=field,
+                                serialized_data=data,
+                            )
         else:
             self.stdout.write('There are no models to create field history for.')
