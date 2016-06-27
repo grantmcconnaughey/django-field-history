@@ -36,10 +36,14 @@ class Human(models.Model):
 
 
 class PizzaOrder(models.Model):
+    STATUS_ORDERED = 'ORDERED'
+    STATUS_COOKING = 'COOKING'
+    STATUS_COMPLETE = 'COMPLETE'
+
     STATUS_CHOICES = (
-        ('ORDERED', 'Ordered'),
-        ('COOKING', 'Cooking'),
-        ('COMPLETE', 'Complete'),
+        (STATUS_ORDERED, 'Ordered'),
+        (STATUS_COOKING, 'Cooking'),
+        (STATUS_COMPLETE, 'Complete'),
     )
     status = models.CharField(max_length=64, choices=STATUS_CHOICES)
 

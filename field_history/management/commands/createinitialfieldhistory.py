@@ -1,5 +1,6 @@
 import inspect
 
+from django.contrib.contenttypes.models import ContentType
 from django.apps import apps
 from django.core import serializers
 from django.core.management import BaseCommand
@@ -29,7 +30,11 @@ class Command(BaseCommand):
 
                 for obj in model._default_manager.all():
                     for field in list(fields):
-                        if not FieldHistory.objects.filter(object_id=obj.id, field_name=field).exists():
+                        content_type = ContentType.objects.get_for_model(obj)
+                        if not FieldHistory.objects.filter(
+                                object_id=obj.id,
+                                content_type=content_type,
+                                field_name=field).exists():
                             data = serializers.serialize(get_serializer_name(),
                                                          [obj],
                                                          fields=[field])
