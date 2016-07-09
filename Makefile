@@ -29,7 +29,7 @@ lint:
 	flake8 field_history
 
 test: lint
-	python runtests.py tests
+	coverage run --source field_history runtests.py tests
 
 coverage:
 	coverage run --source field_history runtests.py tests

@@ -294,13 +294,13 @@ class ManagementCommandsTests(TestCase):
         self.assertIsNotNone(history.date_created)
 
     def test_createinitialfieldhistory_command_only_tracks_new_object(self):
-        person = Person.objects.create(name='Initial Name')
+        Person.objects.create(name='Initial Name')
         FieldHistory.objects.all().delete()
         call_command('createinitialfieldhistory')
 
         self.assertEqual(FieldHistory.objects.count(), 1)
 
-        person = PizzaOrder.objects.create(status=PizzaOrder.STATUS_ORDERED)
+        PizzaOrder.objects.create(status=PizzaOrder.STATUS_ORDERED)
         call_command('createinitialfieldhistory')
 
         self.assertEqual(FieldHistory.objects.count(), 2)
