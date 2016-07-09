@@ -48,3 +48,18 @@ class PizzaOrder(models.Model):
     status = models.CharField(max_length=64, choices=STATUS_CHOICES)
 
     field_history = FieldHistoryTracker(['status'])
+
+
+# Models to test many-to-many relationships
+class Window(models.Model):
+    pass
+
+
+class Building(models.Model):
+    windows = models.ManyToManyField(Window)
+
+
+class Restaurant(models.Model):
+    building = models.ForeignKey(Building)
+
+    field_history = FieldHistoryTracker(['building'])

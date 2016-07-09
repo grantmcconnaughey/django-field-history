@@ -10,7 +10,7 @@ from django.test import TestCase
 from django.utils import six
 from field_history.models import FieldHistory
 
-from .models import Human, Owner, Person, Pet, PizzaOrder
+from .models import Human, Owner, Person, Pet, PizzaOrder, Restaurant, Building, Window
 
 JSON_NESTED_SETTINGS = dict(FIELD_HISTORY_SERIALIZER_NAME='json_nested',
                             SERIALIZATION_MODULES={'json_nested': 'field_history.json_nested_serializer'})
@@ -250,6 +250,19 @@ class FieldHistoryTests(TestCase):
         self.assertEqual(history.object, owner)
         self.assertEqual(history.field_name, 'pet')
         self.assertEqual(history.field_value, pet)
+        self.assertIsNotNone(history.date_created)
+
+    def test_field_history_works_with_foreign_key_that_has_many_to_many(self):
+        window = Window.objects.create()
+        building = Building.objects.create()
+        building.windows.add(window)
+        restaurant = Restaurant.objects.create(building=building)
+
+        self.assertEqual(FieldHistory.objects.count(), 1)
+        history = FieldHistory.objects.get()
+        self.assertEqual(history.object, restaurant)
+        self.assertEqual(history.field_name, 'building')
+        self.assertEqual(history.field_value, building)
         self.assertIsNotNone(history.date_created)
 
     def test_field_history_works_with_field_set_to_None(self):
