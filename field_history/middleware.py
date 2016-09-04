@@ -1,8 +1,16 @@
 from .tracker import FieldHistoryTracker
-from django.utils.deprecation import MiddlewareMixin
+from django import VERSION
 
 
-class FieldHistoryMiddleware(MiddlewareMixin):
+if VERSION >= (1, 10):
+    from django.utils.deprecation import MiddlewareMixin
 
-    def process_request(self, request):
-        FieldHistoryTracker.thread.request = request
+    class FieldHistoryMiddleware(MiddlewareMixin):
+
+        def process_request(self, request):
+            FieldHistoryTracker.thread.request = request
+else:
+    class FieldHistoryMiddleware(object):
+
+        def process_request(self, request):
+            FieldHistoryTracker.thread.request = request
