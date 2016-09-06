@@ -3,6 +3,11 @@
 History
 -------
 
+0.6.0 (Not released)
+++++++++++++++++++++++
+* Added Django 1.10 compatibility.
+* Fixed issue that would duplicate tracked fields.
+
 0.5.0 (April 16, 2016)
 ++++++++++++++++++++++
 * Added the ability to track field history of parent models.
