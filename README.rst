@@ -122,14 +122,18 @@ Use this command after changing a model field name of a field you track with ``F
 
     python manage.py renamefieldhistory --model=app_label.model_name --from_field=old_field_name --to_field=new_field_name
 
-For instance, if you have this model::
+For instance, if you have this model:
+
+.. code-block:: python
 
     class Person(models.Model):
         username = models.CharField(max_length=255)
 
         field_history = FieldHistoryTracker(['username'])
 
-And you change the ``username`` field name to ``handle``::
+And you change the ``username`` field name to ``handle``:
+
+.. code-block:: python
 
     class Person(models.Model):
         handle = models.CharField(max_length=255)
@@ -143,7 +147,9 @@ You will need to also update the ``field_name`` value in all ``FieldHistory`` ob
 Storing Which User Changed the Field
 ------------------------------------
 
-There are two ways to store the user that changed your model field. The simplest way is to use **the logged in user** that made the request. To do this, add the ``FieldHistoryMiddleware`` class to your ``MIDDLEWARE`` setting (in Django 1.10+) or your ``MIDDLEWARE_CLASSES`` setting (in Django 1.7-1.9)::
+There are two ways to store the user that changed your model field. The simplest way is to use **the logged in user** that made the request. To do this, add the ``FieldHistoryMiddleware`` class to your ``MIDDLEWARE`` setting (in Django 1.10+) or your ``MIDDLEWARE_CLASSES`` setting (in Django 1.7-1.9).
+
+.. code-block:: python
 
     MIDDLEWARE = [
         'django.contrib.sessions.middleware.SessionMiddleware',
