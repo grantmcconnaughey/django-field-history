@@ -172,6 +172,28 @@ Alternatively, you can add a ``_field_history_user`` property to the model that 
         def _field_history_user(self):
             return self.updated_by
 
+Working with MySQL
+------------------
+
+If you're using MySQL, the default configuration will throw an exception when you run migrations. (By default, ``FieldHistory.object_id`` is implemented as a ``TextField`` for flexibility, but indexed columns in MySQL InnoDB tables may be a maximum of 767 bytes.) To fix this, you can set ``FIELD_HISTORY_OBJECT_ID_TYPE`` in settings.py to override the default field type with one that meets MySQL's constraints. ``FIELD_HISTORY_OBJECT_ID_TYPE`` may be set to either:
+
+1. the Django model field class you wish to use, or
+2. a tuple ``(field_class, kwargs)``, where ``field_class`` is a Django model field class and ``kwargs`` is a dict of arguments to pass to the field class constructor.
+
+To approximate the default behavior for Postgres when using MySQL, configure ``object_id`` to use a ``CharField`` by adding the following to settings.py:
+
+.. code-block:: python
+
+    from django.db import models
+    FIELD_HISTORY_OBJECT_ID_TYPE = (models.CharField, {'max_length': 100})
+
+``FIELD_HISTORY_OBJECT_ID_TYPE`` also allows you to use a field type that's more efficient for your use case, even if you're using Postgres (or a similarly unconstrained database). For example, if you always let Django auto-create an ``id`` field (implemented internally as an ``AutoField``), setting ``FIELD_HISTORY_OBJECT_ID_TYPE`` to ``IntegerField`` will result in efficiency gains (both in time and space). This would look like:
+
+.. code-block:: python
+
+    from django.db import models
+    FIELD_HISTORY_OBJECT_ID_TYPE = models.IntegerField
+
 Running Tests
 -------------
 

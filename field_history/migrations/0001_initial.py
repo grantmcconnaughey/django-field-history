@@ -6,6 +6,8 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 
+from field_history.models import OBJECT_ID_TYPE_SETTING, instantiate_object_id_field
+
 
 class Migration(migrations.Migration):
 
@@ -21,7 +23,7 @@ class Migration(migrations.Migration):
             name='FieldHistory',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('object_id', models.TextField(db_index=True)),
+                ('object_id', instantiate_object_id_field(getattr(settings, OBJECT_ID_TYPE_SETTING, models.TextField))),
                 ('field_name', models.CharField(max_length=500)),
                 ('serialized_data', models.TextField()),
                 ('date_created', models.DateTimeField(auto_now_add=True, db_index=True)),

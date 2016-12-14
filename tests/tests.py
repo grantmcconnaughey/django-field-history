@@ -5,10 +5,11 @@ import datetime
 from django.contrib.auth import get_user_model
 from django.core.management import CommandError, call_command
 from django.core.urlresolvers import reverse
+from django.db import models
 from django.test.utils import override_settings
 from django.test import TestCase
 from django.utils import six
-from field_history.models import FieldHistory
+from field_history.models import FieldHistory, instantiate_object_id_field
 
 from .models import Human, Owner, Person, Pet, PizzaOrder
 
@@ -270,6 +271,22 @@ class FieldHistoryTests(TestCase):
         self.assertEqual(history.object, owner)
         self.assertEqual(history.field_name, 'name')
         self.assertEqual(history.field_value, 'Jon')
+
+    def test_object_id_field_type_class(self):
+        field = instantiate_object_id_field(models.PositiveIntegerField)
+        self.assertIsInstance(field, models.PositiveIntegerField)
+
+    def test_object_id_field_type_tuple(self):
+        field = instantiate_object_id_field((models.CharField, {'max_length': 20}))
+        self.assertIsInstance(field, models.CharField)
+        self.assertEqual(field.max_length, 20)
+
+    def test_object_id_field_type_requires_field_class(self):
+        self.assertRaises(TypeError, lambda: instantiate_object_id_field(int))
+
+    def test_object_id_field_type_requires_kwargs_as_dict(self):
+        object_id_tuple_bad_kwargs = (models.TextField, 10)
+        self.assertRaises(TypeError, lambda: instantiate_object_id_field(object_id_tuple_bad_kwargs))
 
 
 class ManagementCommandsTests(TestCase):
