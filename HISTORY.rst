@@ -4,7 +4,7 @@ History
 -------
 
 0.6.0 (December 22, 2016)
-++++++++++++++++++++++
++++++++++++++++++++++++++
 * Added Django 1.10 compatibility.
 * Added MySQL compatibility.
 * Fixed issue that would duplicate tracked fields.
