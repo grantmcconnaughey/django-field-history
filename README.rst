@@ -6,7 +6,7 @@ django-field-history
     :target: https://badge.fury.io/py/django-field-history
 
 .. image:: https://readthedocs.org/projects/django-field-history/badge/?version=latest
-    :target: http://django-field-history.readthedocs.org/en/latest/?badge=latest
+    :target: https://django-field-history.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
 .. image:: https://travis-ci.org/grantmcconnaughey/django-field-history.svg?branch=master
@@ -20,7 +20,7 @@ A Django app to track changes to a model field. For Python 2.7/3.2+ and Django 1
 Documentation
 -------------
 
-The full documentation is at https://django-field-history.readthedocs.org.
+The full documentation is at https://django-field-history.readthedocs.io.
 
 Features
 --------
