@@ -3,6 +3,10 @@
 History
 -------
 
+0.6.1 (Not released)
+++++++++++++++++++++
+* Fixed generic primary key bug with `createinitialfieldhistory` command (#20)
+
 0.6.0 (December 22, 2016)
 +++++++++++++++++++++++++
 * Added Django 1.10 compatibility.
