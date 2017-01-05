@@ -6,6 +6,7 @@ python:
   - 3.3
   - 3.4
   - 3.5
+  - 3.6
 
 before_install:
   - pip install coveralls
@@ -34,6 +35,8 @@ matrix:
     - python: 3.3
       env: DJANGO=1.9.12
     - python: 3.5
+      env: DJANGO=1.7.11
+    - python: 3.6
       env: DJANGO=1.7.11
 
 after_success:
