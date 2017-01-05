@@ -32,7 +32,7 @@ class Command(BaseCommand):
                     for field in list(fields):
                         content_type = ContentType.objects.get_for_model(obj)
                         if not FieldHistory.objects.filter(
-                                object_id=obj.id,
+                                object_id=obj.pk,
                                 content_type=content_type,
                                 field_name=field).exists():
                             data = serializers.serialize(get_serializer_name(),
