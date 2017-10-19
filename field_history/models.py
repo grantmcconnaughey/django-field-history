@@ -52,7 +52,7 @@ class FieldHistory(models.Model):
         get_latest_by = 'date_created'
 
     def __str__(self):
-        return '{} field history for {}'.format(self.field_name, self.object)
+        return u'{} field history for {}'.format(self.field_name, self.object)
 
     @property
     def field_value(self):
