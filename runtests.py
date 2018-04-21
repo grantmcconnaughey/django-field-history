@@ -22,6 +22,12 @@ try:
             "tests",
         ],
         SITE_ID=1,
+        MIDDLEWARE=(
+            'django.contrib.sessions.middleware.SessionMiddleware',
+            'django.middleware.common.CommonMiddleware',
+            'django.contrib.auth.middleware.AuthenticationMiddleware',
+            'field_history.middleware.FieldHistoryMiddleware',
+        ),
         MIDDLEWARE_CLASSES=(
             'django.contrib.sessions.middleware.SessionMiddleware',
             'django.middleware.common.CommonMiddleware',

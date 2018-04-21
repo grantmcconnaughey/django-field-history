@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from copy import deepcopy
 import threading
 
+import django
 from django.core import serializers
 from django.conf import settings
 from django.db import models
@@ -124,7 +125,12 @@ class FieldHistoryTracker(object):
             return instance._field_history_user
         except AttributeError:
             try:
-                if self.thread.request.user.is_authenticated():
+                if django.VERSION[0] == 2:
+                    is_authenticated = self.thread.request.user.is_authenticated
+                else:
+                    is_authenticated = self.thread.request.user.is_authenticated()
+
+                if is_authenticated:
                     return self.thread.request.user
                 return None
             except AttributeError:

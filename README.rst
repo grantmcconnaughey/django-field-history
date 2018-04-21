@@ -15,7 +15,7 @@ django-field-history
 .. image:: https://coveralls.io/repos/github/grantmcconnaughey/django-field-history/badge.svg?branch=master
     :target: https://coveralls.io/github/grantmcconnaughey/django-field-history?branch=master
 
-A Django app to track changes to a model field. For Python 2.7/3.2+ and Django 1.7+.
+A Django app to track changes to a model field. For Python 2.7/3.2+ and Django 1.7+, including 2.0.*.
 
 Other similar apps are `django-reversion <https://github.com/etianen/django-reversion>`_ and `django-simple-history <https://github.com/treyhunner/django-simple-history>`_, which track *all* model fields.
 

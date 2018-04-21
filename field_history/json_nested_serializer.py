@@ -48,7 +48,12 @@ class Serializer(JsonSerializer):
             # only one change local_fields -> fields for supporting nested models
             for field in concrete_model._meta.fields:
                 if field.serialize:
-                    if field.rel is None:
+                    if hasattr(field, 'rel'):
+                        rel = field.rel
+                    else:
+                        rel = field.remote_field
+
+                    if rel is None:
                         if self.selected_fields is None or field.attname in self.selected_fields:
                             self.handle_field(obj, field)
                     else:
