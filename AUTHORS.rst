@@ -11,6 +11,7 @@ Contributors
 ------------
 
 * Boris Shifrin <https://github.com/ramusus>
+* Artem Smirnov <https://github.com/Skillberg>
 
 Background
 ----------
