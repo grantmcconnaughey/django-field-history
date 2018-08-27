@@ -11,6 +11,7 @@ Contributors
 ------------
 
 * Boris Shifrin <https://github.com/ramusus>
+* Matheus Cansian <https://github.com/mscansian>
 
 Background
 ----------
