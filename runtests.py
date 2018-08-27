@@ -14,6 +14,7 @@ try:
         },
         ROOT_URLCONF="tests.urls",
         INSTALLED_APPS=[
+            "django.contrib.admin",
             "django.contrib.auth",
             "django.contrib.contenttypes",
             "django.contrib.sessions",
@@ -22,7 +23,7 @@ try:
             "tests",
         ],
         SITE_ID=1,
-        MIDDLEWARE_CLASSES=(
+        MIDDLEWARE=(
             'django.contrib.sessions.middleware.SessionMiddleware',
             'django.middleware.common.CommonMiddleware',
             'django.contrib.auth.middleware.AuthenticationMiddleware',

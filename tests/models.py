@@ -10,7 +10,7 @@ class Pet(models.Model):
 
 class Person(models.Model):
     name = models.CharField(max_length=255)
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)
 
     field_history = FieldHistoryTracker(['name'])
 
@@ -20,7 +20,7 @@ class Person(models.Model):
 
 
 class Owner(Person):
-    pet = models.ForeignKey(Pet, blank=True, null=True)
+    pet = models.ForeignKey(Pet, blank=True, null=True, on_delete=models.CASCADE)
 
     field_history = FieldHistoryTracker(['name', 'pet'])
 

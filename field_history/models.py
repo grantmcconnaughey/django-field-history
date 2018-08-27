@@ -38,12 +38,12 @@ def instantiate_object_id_field(object_id_class_or_tuple=models.TextField):
 @python_2_unicode_compatible
 class FieldHistory(models.Model):
     object_id = instantiate_object_id_field(getattr(settings, OBJECT_ID_TYPE_SETTING, models.TextField))
-    content_type = models.ForeignKey('contenttypes.ContentType', db_index=True)
+    content_type = models.ForeignKey('contenttypes.ContentType', db_index=True, on_delete=models.CASCADE)
     object = GenericForeignKey()
     field_name = models.CharField(max_length=500, db_index=True)
     serialized_data = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True, db_index=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE)
 
     objects = FieldHistoryManager()
 
