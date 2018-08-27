@@ -22,5 +22,16 @@ env:
   - DJANGO=2.0.8
   - DJANGO=2.1
 
+matrix:
+  exclude:
+    - python: 2.7
+      env: DJANGO=2.0.8
+    - python: 2.7
+      env: DJANGO=2.1
+    - python: 3.4
+      env: DJANGO=2.1
+    - python: 3.7-dev
+      env: DJANGO=1.11.15
+
 after_success:
   - coveralls
