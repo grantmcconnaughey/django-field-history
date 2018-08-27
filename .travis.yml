@@ -19,25 +19,9 @@ install:
 script: make test
 
 env:
-  - DJANGO=1.7.11
-  - DJANGO=1.8.17
-  - DJANGO=1.9.12
-  - DJANGO=1.10.4
-
-matrix:
-  exclude:
-    - python: 3.2
-      env: DJANGO=1.10.4
-    - python: 3.3
-      env: DJANGO=1.10.4
-    - python: 3.2
-      env: DJANGO=1.9.12
-    - python: 3.3
-      env: DJANGO=1.9.12
-    - python: 3.5
-      env: DJANGO=1.7.11
-    - python: 3.6
-      env: DJANGO=1.7.11
+  - DJANGO=1.11.15
+  - DJANGO=2.0.8
+  - DJANGO=2.1
 
 after_success:
   - coveralls
