@@ -3,7 +3,7 @@
 History
 -------
 
-0.7.0 (Not released)
+0.7.0 (September 3, 2018)
 ++++++++++++++++++++
 * Added support for Django 2.0 and 2.1
 * Added support for Python 3.7
