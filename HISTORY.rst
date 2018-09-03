@@ -3,13 +3,13 @@
 History
 -------
 
-0.6.1 (Not released)
+0.7.0 (Not released)
 ++++++++++++++++++++
-* Fixed generic primary key bug with `createinitialfieldhistory` command (#20)
-* Dropped support for Python 3.2 and 3.3
-* Dropped support for Django 1.7 through 1.10
+* Added support for Django 2.0 and 2.1
 * Added support for Python 3.7
-* Added support for Django 2.1
+* Dropped support for Django 1.7 through 1.10
+* Dropped support for Python 3.2 and 3.3
+* Fixed generic primary key bug with `createinitialfieldhistory` command (#20)
 
 0.6.0 (December 22, 2016)
 +++++++++++++++++++++++++
