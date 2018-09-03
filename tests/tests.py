@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import datetime
+from decimal import Decimal
 
 from django.contrib.auth import get_user_model
 from django.core.management import CommandError, call_command
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models
 from django.test.utils import override_settings
 from django.test import TestCase
@@ -182,14 +183,14 @@ class FieldHistoryTests(TestCase):
         self.assertIsNotNone(history.date_created)
 
     def test_field_history_works_with_decimal_field(self):
-        human = Human.objects.create(body_temp=98.6)
+        human = Human.objects.create(body_temp=Decimal(98.6))
 
         self.assertEqual(human.get_body_temp_history().count(), 1)
         history = human.get_body_temp_history()[0]
 
         self.assertEqual(history.object, human)
         self.assertEqual(history.field_name, 'body_temp')
-        self.assertEqual(history.field_value, 98.6)
+        self.assertEqual(history.field_value, Decimal(98.6))
         self.assertIsNotNone(history.date_created)
 
     def test_field_history_works_with_boolean_field(self):

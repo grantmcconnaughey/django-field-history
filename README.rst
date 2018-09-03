@@ -15,7 +15,7 @@ django-field-history
 .. image:: https://coveralls.io/repos/github/grantmcconnaughey/django-field-history/badge.svg?branch=master
     :target: https://coveralls.io/github/grantmcconnaughey/django-field-history?branch=master
 
-A Django app to track changes to a model field. For Python 2.7/3.2+ and Django 1.7+.
+A Django app to track changes to a model field. For Python 2.7/3.4+ and Django 1.11/2.0+.
 
 Other similar apps are `django-reversion <https://github.com/etianen/django-reversion>`_ and `django-simple-history <https://github.com/treyhunner/django-simple-history>`_, which track *all* model fields.
 
@@ -173,7 +173,7 @@ You will need to also update the ``field_name`` value in all ``FieldHistory`` ob
 Storing Which User Changed the Field
 ------------------------------------
 
-There are two ways to store the user that changed your model field. The simplest way is to use **the logged in user** that made the request. To do this, add the ``FieldHistoryMiddleware`` class to your ``MIDDLEWARE`` setting (in Django 1.10+) or your ``MIDDLEWARE_CLASSES`` setting (in Django 1.7-1.9).
+There are two ways to store the user that changed your model field. The simplest way is to use **the logged in user** that made the request. To do this, add the ``FieldHistoryMiddleware`` class to your ``MIDDLEWARE`` setting.
 
 .. code-block:: python
 
