@@ -27,6 +27,9 @@ def instantiate_object_id_field(object_id_class_or_tuple=models.TextField):
         object_id_class = object_id_class_or_tuple
         object_id_kwargs = {}
 
+    if type(object_id_class) is not type and type(object_id_class.__class__) is type:
+        object_id_class = object_id_class.__class__
+
     if not issubclass(object_id_class, models.fields.Field):
         raise TypeError('settings.%s must be a Django model field or (field, kwargs) tuple' % OBJECT_ID_TYPE_SETTING)
     if not isinstance(object_id_kwargs, dict):
