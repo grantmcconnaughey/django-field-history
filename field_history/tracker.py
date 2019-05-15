@@ -9,6 +9,7 @@ from django.db import models
 from django.utils.functional import curry
 
 from .models import FieldHistory
+from .signals import post_field_history_bulk_create
 
 
 def get_serializer_name():
@@ -111,7 +112,13 @@ class FieldHistoryTracker(object):
 
             if field_histories:
                 # Create all the FieldHistory objects in one batch
-                FieldHistory.objects.bulk_create(field_histories)
+                field_history_instances = \
+                    FieldHistory.objects.bulk_create(field_histories)
+                post_field_history_bulk_create.send(
+                    sender=FieldHistory,
+                    tracked_instance=instance,
+                    field_history_instances=field_history_instances
+                )
 
             # Update tracker in case this model is saved again
             self._inititalize_tracker(instance)
