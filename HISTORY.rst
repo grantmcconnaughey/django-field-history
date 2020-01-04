@@ -7,7 +7,6 @@ History
 ++++++++++++++++++++
 * Added support for Django 2.2 and 3.0
 * Added support for Python 3.8
-* Dropped support for Django 1.7 through 1.10
 
 0.7.0 (September 3, 2018)
 ++++++++++++++++++++

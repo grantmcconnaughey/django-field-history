@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
-try:
-    from django.contrib.contenttypes.fields import GenericForeignKey
-except ImportError:  # Django < 1.9 pragma: no cover
-    from django.contrib.contenttypes.generic import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core import serializers
 from django.db import models
 

@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
 from copy import deepcopy
-import functools
 import threading
 
 from django.core import serializers
@@ -13,6 +12,17 @@ from .models import FieldHistory
 
 def get_serializer_name():
     return getattr(settings, 'FIELD_HISTORY_SERIALIZER_NAME', 'json')
+
+
+def curry(*args, **kwargs):
+    try:
+        # Python 3.4+
+        from functools import partialmethod
+        return partialmethod(*args, **kwargs)
+    except ImportError:
+        # Python 2.7
+        from django.utils.functional import curry
+        return curry(*args, **kwargs)
 
 
 class FieldInstanceTracker(object):
@@ -63,7 +73,7 @@ class FieldHistoryTracker(object):
         setattr(cls, '_get_field_history', _get_field_history)
         for field in self.fields:
             setattr(cls, 'get_%s_history' % field,
-                    functools.partialmethod(cls._get_field_history, field=field))
+                    curry(cls._get_field_history, field=field))
         self.name = name
         self.attname = '_%s' % name
         models.signals.class_prepared.connect(self.finalize_class, sender=cls)
