@@ -1,12 +1,12 @@
 from __future__ import unicode_literals
 
 from copy import deepcopy
+import functools
 import threading
 
 from django.core import serializers
 from django.conf import settings
 from django.db import models
-from django.utils.functional import curry
 
 from .models import FieldHistory
 
@@ -63,7 +63,7 @@ class FieldHistoryTracker(object):
         setattr(cls, '_get_field_history', _get_field_history)
         for field in self.fields:
             setattr(cls, 'get_%s_history' % field,
-                    curry(cls._get_field_history, field=field))
+                    functools.partialmethod(cls._get_field_history, field=field))
         self.name = name
         self.attname = '_%s' % name
         models.signals.class_prepared.connect(self.finalize_class, sender=cls)
