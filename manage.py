@@ -11,6 +11,7 @@ try:
         DATABASES={
             "default": {
                 "ENGINE": "django.db.backends.sqlite3",
+                "NAME": "db.sqlite3"
             }
         },
         ROOT_URLCONF="tests.urls",
@@ -18,11 +19,30 @@ try:
             "django.contrib.admin",
             "django.contrib.auth",
             "django.contrib.contenttypes",
+            "django.contrib.messages",
             "django.contrib.sites",
             "field_history",
+            "tests",
         ],
         SITE_ID=1,
-        MIDDLEWARE_CLASSES=(),
+        MIDDLEWARE=(
+            'django.contrib.sessions.middleware.SessionMiddleware',
+            'django.middleware.common.CommonMiddleware',
+            'django.contrib.auth.middleware.AuthenticationMiddleware',
+            'django.contrib.messages.middleware.MessageMiddleware',
+            'field_history.middleware.FieldHistoryMiddleware',
+        ),
+        TEMPLATES=[
+            {
+                'BACKEND': 'django.template.backends.django.DjangoTemplates',
+                'OPTIONS': {
+                    'context_processors': [
+                        'django.contrib.auth.context_processors.auth',
+                        'django.contrib.messages.context_processors.messages'
+                    ]
+                }
+            }
+        ]
     )
 
     try:

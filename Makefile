@@ -22,7 +22,7 @@ clean-pyc:
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
 
-makemigrations:
+migrations:
 	python manage.py makemigrations field_history
 
 lint:
