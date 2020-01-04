@@ -9,7 +9,10 @@ from django.urls import reverse
 from django.db import models
 from django.test.utils import override_settings
 from django.test import TestCase
-from django.utils import six
+try:
+    from django.utils import six
+except ImportError:
+    import six
 from field_history.models import FieldHistory, instantiate_object_id_field
 
 from .models import Human, Owner, Person, Pet, PizzaOrder

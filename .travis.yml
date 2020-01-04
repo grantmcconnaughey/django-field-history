@@ -5,7 +5,8 @@ python:
   - 3.4
   - 3.5
   - 3.6
-  - 3.7-dev
+  - 3.7
+  - 3.8
 
 before_install:
   - pip install coveralls
@@ -18,20 +19,36 @@ install:
 script: make test
 
 env:
-  - DJANGO=1.11.15
-  - DJANGO=2.0.8
-  - DJANGO=2.1
+  - DJANGO=1.11.27
+  - DJANGO=2.0.13
+  - DJANGO=2.1.15
+  - DJANGO=2.2.9
+  - DJANGO=3.0.2
 
 matrix:
   exclude:
+    - python: 3.8
+      env: DJANGO=1.11.27
     - python: 2.7
-      env: DJANGO=2.0.8
+      env: DJANGO=2.0.13
+    - python: 3.8
+      env: DJANGO=2.0.13
     - python: 2.7
-      env: DJANGO=2.1
+      env: DJANGO=2.1.15
     - python: 3.4
-      env: DJANGO=2.1
-    - python: 3.7-dev
-      env: DJANGO=1.11.15
+      env: DJANGO=2.1.15
+    - python: 3.8
+      env: DJANGO=2.1.15
+    - python: 2.7
+      env: DJANGO=2.2.9
+    - python: 3.4
+      env: DJANGO=2.2.9
+    - python: 2.7
+      env: DJANGO=3.0.2
+    - python: 3.4
+      env: DJANGO=3.0.2
+    - python: 3.5
+      env: DJANGO=3.0.2
 
 after_success:
   - coveralls
