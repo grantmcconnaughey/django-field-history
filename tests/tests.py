@@ -9,8 +9,12 @@ from django.urls import reverse
 from django.db import models
 from django.test.utils import override_settings
 from django.test import TestCase
-from django.utils import six
+try:
+    from django.utils import six
+except ImportError:
+    import six
 from field_history.models import FieldHistory, instantiate_object_id_field
+from field_history.tracker import FieldHistoryTracker
 
 from .models import Human, Owner, Person, Pet, PizzaOrder
 
@@ -115,6 +119,9 @@ class FieldHistoryTests(TestCase):
         self.assertEqual(history.field_value, 'ORDERED')
         self.assertIsNotNone(history.date_created)
         self.assertEqual(history.user, user)
+
+        # Don't pollute future tests
+        FieldHistoryTracker.thread.request = None
 
     def test_updated_object_creates_additional_field_history(self):
         person = Person.objects.create(name='Initial Name')

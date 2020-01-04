@@ -6,13 +6,23 @@ import threading
 from django.core import serializers
 from django.conf import settings
 from django.db import models
-from django.utils.functional import curry
 
 from .models import FieldHistory
 
 
 def get_serializer_name():
     return getattr(settings, 'FIELD_HISTORY_SERIALIZER_NAME', 'json')
+
+
+def curry(*args, **kwargs):
+    try:
+        # Python 3.4+
+        from functools import partialmethod
+        return partialmethod(*args, **kwargs)
+    except ImportError:
+        # Python 2.7
+        from django.utils.functional import curry
+        return curry(*args, **kwargs)
 
 
 class FieldInstanceTracker(object):
@@ -77,10 +87,10 @@ class FieldHistoryTracker(object):
     def initialize_tracker(self, sender, instance, **kwargs):
         if not isinstance(instance, self.model_class):
             return  # Only init instances of given model (including children)
-        self._inititalize_tracker(instance)
+        self._initialize_tracker(instance)
         self.patch_save(instance)
 
-    def _inititalize_tracker(self, instance):
+    def _initialize_tracker(self, instance):
         tracker = self.tracker_class(instance, self.fields)
         setattr(instance, self.attname, tracker)
         tracker.set_saved_fields()
@@ -114,7 +124,7 @@ class FieldHistoryTracker(object):
                 FieldHistory.objects.bulk_create(field_histories)
 
             # Update tracker in case this model is saved again
-            self._inititalize_tracker(instance)
+            self._initialize_tracker(instance)
 
             return ret
         instance.save = save

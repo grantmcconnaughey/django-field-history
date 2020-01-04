@@ -11,7 +11,10 @@ from __future__ import unicode_literals
 import warnings
 
 from django.core.serializers.json import Serializer as JsonSerializer
-from django.utils import six
+try:
+    from django.utils import six
+except ImportError:
+    import six
 
 try:
     from django.utils.deprecation import RemovedInDjango19Warning

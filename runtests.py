@@ -17,6 +17,7 @@ try:
             "django.contrib.admin",
             "django.contrib.auth",
             "django.contrib.contenttypes",
+            "django.contrib.messages",
             "django.contrib.sessions",
             "django.contrib.sites",
             "field_history",
@@ -27,8 +28,20 @@ try:
             'django.contrib.sessions.middleware.SessionMiddleware',
             'django.middleware.common.CommonMiddleware',
             'django.contrib.auth.middleware.AuthenticationMiddleware',
+            'django.contrib.messages.middleware.MessageMiddleware',
             'field_history.middleware.FieldHistoryMiddleware',
         ),
+        TEMPLATES=[
+            {
+                'BACKEND': 'django.template.backends.django.DjangoTemplates',
+                'OPTIONS': {
+                    'context_processors': [
+                        'django.contrib.auth.context_processors.auth',
+                        'django.contrib.messages.context_processors.messages'
+                    ]
+                }
+            }
+        ]
     )
 
     try:
