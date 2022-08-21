@@ -6,8 +6,41 @@ import threading
 from django.core import serializers
 from django.conf import settings
 from django.db import models
+from django.db.models.fields.files import FieldFile
 
 from .models import FieldHistory
+
+
+class LightStateFieldFile(FieldFile):
+    """
+    refer to https://github.com/jazzband/django-model-utils/blob/master/model_utils/tracker.py
+    FieldFile subclass with the only aim to remove the instance from the state.
+    The change introduced in Django 3.1 on FieldFile subclasses results in pickling the
+    whole instance for every field tracked.
+    As this is done on the initialization of objects, a simple queryset evaluation on
+    Django 3.1+ can make the app unusable, as CPU and memory usage gets easily
+    multiplied by magnitudes.
+    """
+
+    def __getstate__(self):
+        """
+        We don't need to deepcopy the instance, so nullify if provided.
+        """
+        state = super().__getstate__()
+        if "instance" in state:
+            state["instance"] = None
+        return state
+
+
+def lightweight_deepcopy(value):
+    """
+    Use our lightweight class to avoid copying the instance on a FieldFile deepcopy.
+    """
+    if isinstance(value, FieldFile):
+        value = LightStateFieldFile(
+            instance=value.instance, field=value.field, name=value.name,
+        )
+    return deepcopy(value)
 
 
 def get_serializer_name():
@@ -41,7 +74,7 @@ class FieldInstanceTracker(object):
 
         # preventing mutable fields side effects
         for field, field_value in self.saved_data.items():
-            self.saved_data[field] = deepcopy(field_value)
+            self.saved_data[field] = lightweight_deepcopy(field_value)
 
     def current(self, fields=None):
         """Returns dict of current values for all tracked fields"""
